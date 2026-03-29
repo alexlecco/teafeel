@@ -58,12 +58,12 @@ export default function HomeScreen() {
                 key={tea.id}
                 style={[
                   styles.compartment,
-                  // Add specific borders to mimic the wooden dividers based on position (4 columns)
-                  index % 4 !== 3 && {
+                  // Add specific borders to mimic the wooden dividers based on position (2 columns)
+                  index % 2 !== 1 && {
                     borderRightWidth: 4,
                     borderRightColor: "#B08D6A",
                   },
-                  index < 4 && {
+                  index < 6 && {
                     borderBottomWidth: 4,
                     borderBottomColor: "#B08D6A",
                   },
@@ -141,11 +141,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#D1AB84", // Inner wood base
   },
   compartment: {
-    width: "25%", // 4 columns
-    aspectRatio: 0.8, // Slightly taller than square to fit the tea packet look
+    width: "50%", // 2 columns
+    aspectRatio: 1.1, // Slightly wider to fit nicely
     justifyContent: "center",
     alignItems: "center",
-    padding: 6,
+    padding: 10,
     // Base shadow to create depth for the compartment
   },
   teaPacket: {
@@ -172,12 +172,12 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255,255,255,0.1)",
   },
   teaIcon: {
-    fontSize: 24,
-    marginBottom: 4,
+    fontSize: 40,
+    marginBottom: 8,
   },
   teaName: {
     color: "#FFF",
-    fontSize: 9,
+    fontSize: 14,
     fontWeight: "800",
     textAlign: "center",
     textTransform: "uppercase",
