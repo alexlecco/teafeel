@@ -1,6 +1,6 @@
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import React from "react";
+import React, { useState } from "react";
 import {
   Dimensions,
   ScrollView,
@@ -38,6 +38,10 @@ const MOCK_TEAS = [
 export default function HomeScreen() {
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? "light"];
+  const [isBoxOpen, setIsBoxOpen] = useState(true);
+
+  // Default slogan para la demostración
+  const slogan = "El arte del bienestar, en cada sorbo";
 
   return (
     <ScrollView
@@ -46,46 +50,61 @@ export default function HomeScreen() {
       <View style={styles.header}>
         <Text style={[styles.title, { color: theme.text }]}>Tu Teabox</Text>
         <Text style={[styles.subtitle, { color: theme.icon }]}>
-          Aquí tienes tu selección actual en la caja organizadora.
+          Aquí tienes tu selección actual en la caja organizadora o teabox ☕.
         </Text>
       </View>
 
       <View style={styles.boxWrapper}>
         <View style={styles.woodenBoxEdge}>
-          <View style={styles.woodenBoxInner}>
-            {MOCK_TEAS.map((tea, index) => (
-              <View
-                key={tea.id}
-                style={[
-                  styles.compartment,
-                  // Add specific borders to mimic the wooden dividers based on position (2 columns)
-                  index % 2 !== 1 && {
-                    borderRightWidth: 4,
-                    borderRightColor: "#B08D6A",
-                  },
-                  index < 6 && {
-                    borderBottomWidth: 4,
-                    borderBottomColor: "#B08D6A",
-                  },
-                ]}
-              >
+          {isBoxOpen ? (
+            <View style={styles.woodenBoxInner}>
+              {MOCK_TEAS.map((tea, index) => (
                 <View
-                  style={[styles.teaPacket, { backgroundColor: tea.color }]}
+                  key={tea.id}
+                  style={[
+                    styles.compartment,
+                    // Add specific borders to mimic the wooden dividers based on position (2 columns)
+                    index % 2 !== 1 && {
+                      borderRightWidth: 4,
+                      borderRightColor: "#B08D6A",
+                    },
+                    index < 6 && {
+                      borderBottomWidth: 4,
+                      borderBottomColor: "#B08D6A",
+                    },
+                  ]}
                 >
-                  <View style={styles.teaPacketInner}>
-                    <Text style={styles.teaIcon}>{tea.icon}</Text>
-                    <Text style={styles.teaName} numberOfLines={2}>
-                      {tea.name}
-                    </Text>
+                  <View
+                    style={[styles.teaPacket, { backgroundColor: tea.color }]}
+                  >
+                    <View style={styles.teaPacketInner}>
+                      <Text style={styles.teaIcon}>{tea.icon}</Text>
+                      <Text style={styles.teaName} numberOfLines={2}>
+                        {tea.name}
+                      </Text>
+                    </View>
                   </View>
                 </View>
+              ))}
+            </View>
+          ) : (
+            <View style={styles.woodenLid}>
+              {/* Engraved Logo Simulation */}
+              <View style={styles.engravedLogo}>
+                <Text style={styles.engravedTeafeel}>teafeel</Text>
+                <Text style={styles.engravedSlogan}>"{slogan}"</Text>
               </View>
-            ))}
-          </View>
-          {/* Drawer section simulation */}
-          <View style={styles.drawerSection}>
+            </View>
+          )}
+
+          {/* Drawer section simulation - Now clickable */}
+          <TouchableOpacity 
+            style={styles.drawerSection} 
+            activeOpacity={0.7}
+            onPress={() => setIsBoxOpen(!isBoxOpen)}
+          >
             <View style={styles.drawerHandle} />
-          </View>
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -147,6 +166,40 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 10,
     // Base shadow to create depth for the compartment
+  },
+  woodenLid: {
+    width: "100%",
+    aspectRatio: 0.55, // Approximately the same height as the 4x2 grid
+    backgroundColor: "#C39A73", // Smooth wood lid
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  engravedLogo: {
+    alignItems: "center",
+    justifyContent: "center",
+    opacity: 0.8, // Make it look carved/engraved
+  },
+  engravedTeafeel: {
+    fontSize: 42,
+    fontWeight: "900",
+    color: "#6D4C3D", // Very dark wood color
+    letterSpacing: -1,
+    marginBottom: 10,
+    textShadowColor: 'rgba(255, 255, 255, 0.2)', // Fake highlight
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 1,
+  },
+  engravedSlogan: {
+    fontSize: 16,
+    color: "#7E5C49",
+    fontWeight: "600",
+    fontStyle: "italic",
+    textAlign: "center",
+    paddingHorizontal: 30,
+    textShadowColor: 'rgba(255, 255, 255, 0.2)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 1,
   },
   teaPacket: {
     width: "100%",
