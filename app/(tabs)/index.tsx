@@ -11,6 +11,7 @@ import {
   Animated,
   Image,
 } from "react-native";
+import { useRouter } from "expo-router";
 
 const { width } = Dimensions.get("window");
 
@@ -36,6 +37,7 @@ export default function HomeScreen() {
 
   // Default slogan para la demostración
   const slogan = "El arte del bienestar, en cada sorbo";
+  const router = useRouter();
 
   const openTeaDetails = (tea: typeof INITIAL_TEAS[0]) => {
     if (tea.empty) return;
@@ -137,6 +139,7 @@ export default function HomeScreen() {
 
       <TouchableOpacity
         style={[styles.refeelButton, { backgroundColor: theme.tint }]}
+        onPress={() => router.push("/checkout")}
       >
         <Text style={styles.refeelButtonText}>re-feel</Text>
       </TouchableOpacity>
