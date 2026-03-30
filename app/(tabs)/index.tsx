@@ -14,7 +14,7 @@ import {
 
 const { width } = Dimensions.get("window");
 
-const MOCK_TEAS = [
+const INITIAL_TEAS = [
   { id: "1", name: "Lady Grey", icon: "🫐", color: "#4A90E2", empty: false, ingredients: ["Té Negro", "Piel de Naranja", "Piel de Limón", "Bergamota"], prepMode: "Infundir 3 mins en agua a 100°C", emojis: "🫖🍋✨", origin: "Reino Unido", images: ["https://images.unsplash.com/photo-1576092762791-dd9e2220abd4?w=400&q=80", "https://images.unsplash.com/photo-1563822249548-9a72b6353cd1?w=400&q=80", "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=400&q=80"] },
   { id: "2", name: "Pomegranate", icon: "🌺", color: "#D9534F", empty: false, ingredients: ["Té Blanco", "Granada", "Rosa", "Hibisco"], prepMode: "Infundir 4 mins en agua a 80°C", emojis: "🌺💧🩸", origin: "especialidad", images: ["https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=400&q=80", "https://images.unsplash.com/photo-1576092762791-dd9e2220abd4?w=400&q=80", "https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?w=400&q=80"] },
   { id: "3", name: "Lemon & Ginger", icon: "🍋", color: "#FCD116", empty: false, ingredients: ["Jengibre", "Limón", "Manzana", "Zarzamora"], prepMode: "Infundir 5 mins en agua a 100°C", emojis: "🍋✨🌿", origin: "Asia / especialidad", images: ["https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=400&q=80", "https://images.unsplash.com/photo-1563822249548-9a72b6353cd1?w=400&q=80", "https://images.unsplash.com/photo-1576092762791-dd9e2220abd4?w=400&q=80"] },
@@ -29,14 +29,16 @@ export default function HomeScreen() {
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? "light"];
   const [isBoxOpen, setIsBoxOpen] = useState(true);
+  const [teasGrid, setTeasGrid] = useState(INITIAL_TEAS);
   
-  const [selectedTea, setSelectedTea] = useState<typeof MOCK_TEAS[0] | null>(null);
+  const [selectedTea, setSelectedTea] = useState<typeof INITIAL_TEAS[0] | null>(null);
   const expandAnim = useRef(new Animated.Value(0)).current;
 
   // Default slogan para la demostración
   const slogan = "El arte del bienestar, en cada sorbo";
 
-  const openTeaDetails = (tea: typeof MOCK_TEAS[0]) => {
+  const openTeaDetails = (tea: typeof INITIAL_TEAS[0]) => {
+    if (tea.empty) return;
     setSelectedTea(tea);
     Animated.timing(expandAnim, {
       toValue: 1,
@@ -49,6 +51,10 @@ export default function HomeScreen() {
     // Vuelve sin animación como solicitado
     setSelectedTea(null);
     expandAnim.setValue(0);
+  };
+
+  const removeTea = (id: string) => {
+    setTeasGrid(prev => prev.map(tea => tea.id === id ? { ...tea, empty: true } : tea));
   };
 
   return (
@@ -67,7 +73,7 @@ export default function HomeScreen() {
         <View style={styles.woodenBoxEdge}>
           {isBoxOpen ? (
             <View style={styles.woodenBoxInner}>
-              {MOCK_TEAS.map((tea, index) => (
+              {teasGrid.map((tea, index) => (
                 <View
                   key={tea.id}
                   style={[
@@ -83,18 +89,28 @@ export default function HomeScreen() {
                     },
                   ]}
                 >
-                  <TouchableOpacity
-                    activeOpacity={0.8}
-                    onPress={() => openTeaDetails(tea)}
-                    style={[styles.teaPacket, { backgroundColor: tea.color }]}
-                  >
-                    <View style={styles.teaPacketInner}>
-                      <Text style={styles.teaIcon}>{tea.icon}</Text>
-                      <Text style={styles.teaName} numberOfLines={2}>
-                        {tea.name}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
+                  {!tea.empty ? (
+                    <TouchableOpacity
+                      activeOpacity={0.8}
+                      onPress={() => openTeaDetails(tea)}
+                      style={[styles.teaPacket, { backgroundColor: tea.color }]}
+                    >
+                      <View style={styles.teaPacketInner}>
+                        {/* Botón X de eliminación */}
+                        <TouchableOpacity style={styles.deleteBtn} onPress={() => removeTea(tea.id)}>
+                          <Text style={styles.deleteBtnText}>✕</Text>
+                        </TouchableOpacity>
+
+                        <Text style={styles.teaIcon}>{tea.icon}</Text>
+                        <Text style={styles.teaName} numberOfLines={2}>
+                          {tea.name}
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  ) : (
+                    // Render Empty Wooden Space
+                    <View style={styles.emptyCompartment} />
+                  )}
                 </View>
               ))}
             </View>
@@ -285,6 +301,29 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(255,255,255,0.1)",
+  },
+  deleteBtn: {
+    position: "absolute",
+    top: 4,
+    right: 4,
+    width: 24,
+    height: 24,
+    backgroundColor: "rgba(0,0,0,0.25)",
+    borderRadius: 12,
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 10,
+  },
+  deleteBtnText: {
+    color: "#FFF",
+    fontSize: 12,
+    fontWeight: "800",
+  },
+  emptyCompartment: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 4,
+    backgroundColor: "rgba(0,0,0,0.08)", // Slight shadow showing it's an empty slot inside wood
   },
   teaIcon: {
     fontSize: 40,
