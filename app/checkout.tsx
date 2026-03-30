@@ -1,8 +1,14 @@
-import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from "react-native";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { useRouter } from "expo-router";
+import React from "react";
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 export default function CheckoutScreen() {
   const colorScheme = useColorScheme();
@@ -10,42 +16,80 @@ export default function CheckoutScreen() {
   const router = useRouter();
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
+    <ScrollView
+      style={[styles.container, { backgroundColor: theme.background }]}
+    >
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => router.back()}
+        >
           <Text style={styles.backButtonText}>← Volver</Text>
         </TouchableOpacity>
         <Text style={[styles.title, { color: theme.text }]}>Checkout</Text>
       </View>
 
-      <View style={[styles.card, { backgroundColor: colorScheme === "dark" ? "#1A251C" : "#FFF" }]}>
-        <Text style={[styles.sectionTitle, { color: theme.text }]}>Resumen del "Refeel"</Text>
+      <View
+        style={[
+          styles.card,
+          { backgroundColor: colorScheme === "dark" ? "#1A251C" : "#FFF" },
+        ]}
+      >
+        <Text style={[styles.sectionTitle, { color: theme.text }]}>
+          Resumen del "refeel"
+        </Text>
         <View style={styles.row}>
-          <Text style={[styles.label, { color: theme.text }]}>Teabox Mensual (8 unidades)</Text>
+          <Text style={[styles.label, { color: theme.text }]}>
+            Teabox Mensual (8 unidades)
+          </Text>
           <Text style={[styles.value, { color: theme.text }]}>$24.00</Text>
         </View>
         <View style={styles.row}>
-          <Text style={[styles.label, { color: theme.text }]}>Envío estándar</Text>
+          <Text style={[styles.label, { color: theme.text }]}>
+            Envío estándar
+          </Text>
           <Text style={[styles.value, { color: theme.text }]}>$4.50</Text>
         </View>
-        <View style={[styles.divider, { backgroundColor: theme.tint, opacity: 0.2 }]} />
+        <View
+          style={[
+            styles.divider,
+            { backgroundColor: theme.tint, opacity: 0.2 },
+          ]}
+        />
         <View style={styles.row}>
           <Text style={[styles.totalLabel, { color: theme.text }]}>Total</Text>
           <Text style={[styles.totalValue, { color: theme.text }]}>$28.50</Text>
         </View>
       </View>
 
-      <View style={[styles.card, { backgroundColor: colorScheme === "dark" ? "#1A251C" : "#FFF" }]}>
-        <Text style={[styles.sectionTitle, { color: theme.text }]}>Método de Pago</Text>
-        <TouchableOpacity style={[styles.paymentMethod, { borderColor: theme.tint }]}>
-          <Text style={[styles.paymentMethodText, { color: theme.text }]}>💳 Tarjeta de Crédito (terminada en 4242)</Text>
+      <View
+        style={[
+          styles.card,
+          { backgroundColor: colorScheme === "dark" ? "#1A251C" : "#FFF" },
+        ]}
+      >
+        <Text style={[styles.sectionTitle, { color: theme.text }]}>
+          Método de Pago
+        </Text>
+        <TouchableOpacity
+          style={[styles.paymentMethod, { borderColor: theme.tint }]}
+        >
+          <Text style={[styles.paymentMethodText, { color: theme.text }]}>
+            💳 Tarjeta de Crédito (terminada en 4242)
+          </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.paymentMethod, { borderColor: "#E2E8F0" }]}>
-          <Text style={[styles.paymentMethodText, { color: theme.icon }]}>+ Añadir nuevo método</Text>
+        <TouchableOpacity
+          style={[styles.paymentMethod, { borderColor: "#E2E8F0" }]}
+        >
+          <Text style={[styles.paymentMethodText, { color: theme.icon }]}>
+            + Añadir nuevo método
+          </Text>
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={[styles.payButton, { backgroundColor: theme.tint }]}>
+      <TouchableOpacity
+        style={[styles.payButton, { backgroundColor: theme.tint }]}
+      >
         <Text style={styles.payButtonText}>Confirmar y Pagar</Text>
       </TouchableOpacity>
     </ScrollView>

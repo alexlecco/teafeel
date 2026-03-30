@@ -1,29 +1,149 @@
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import React, { useState, useRef } from "react";
+import { useRouter } from "expo-router";
+import React, { useRef, useState } from "react";
 import {
+  Animated,
   Dimensions,
+  Image,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  Animated,
-  Image,
 } from "react-native";
-import { useRouter } from "expo-router";
 
 const { width } = Dimensions.get("window");
 
 const INITIAL_TEAS = [
-  { id: "1", name: "Lady Grey", icon: "🫐", color: "#4A90E2", empty: false, ingredients: ["Té Negro", "Piel de Naranja", "Piel de Limón", "Bergamota"], prepMode: "Infundir 3 mins en agua a 100°C", emojis: "🫖🍋✨", origin: "Reino Unido", images: ["https://images.unsplash.com/photo-1576092762791-dd9e2220abd4?w=400&q=80", "https://images.unsplash.com/photo-1563822249548-9a72b6353cd1?w=400&q=80", "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=400&q=80"] },
-  { id: "2", name: "Pomegranate", icon: "🌺", color: "#D9534F", empty: false, ingredients: ["Té Blanco", "Granada", "Rosa", "Hibisco"], prepMode: "Infundir 4 mins en agua a 80°C", emojis: "🌺💧🩸", origin: "especialidad", images: ["https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=400&q=80", "https://images.unsplash.com/photo-1576092762791-dd9e2220abd4?w=400&q=80", "https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?w=400&q=80"] },
-  { id: "3", name: "Lemon & Ginger", icon: "🍋", color: "#FCD116", empty: false, ingredients: ["Jengibre", "Limón", "Manzana", "Zarzamora"], prepMode: "Infundir 5 mins en agua a 100°C", emojis: "🍋✨🌿", origin: "Asia / especialidad", images: ["https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=400&q=80", "https://images.unsplash.com/photo-1563822249548-9a72b6353cd1?w=400&q=80", "https://images.unsplash.com/photo-1576092762791-dd9e2220abd4?w=400&q=80"] },
-  { id: "4", name: "Wild Berries", icon: "🍓", color: "#8E44AD", empty: false, ingredients: ["Frambuesa", "Fresa", "Cereza", "Hibisco"], prepMode: "Infundir 5 mins en agua a 100°C", emojis: "🍓🫐🍒", origin: "especialidad", images: ["https://images.unsplash.com/photo-1563822249548-9a72b6353cd1?w=400&q=80", "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=400&q=80", "https://images.unsplash.com/photo-1576092762791-dd9e2220abd4?w=400&q=80"] },
-  { id: "5", name: "Chai", icon: "🍂", color: "#D35400", empty: false, ingredients: ["Té Negro", "Canela", "Cardamomo", "Clavo"], prepMode: "Infundir 5 mins en agua a 100°C (con leche opcional)", emojis: "☕🍂🔥", origin: "India", images: ["https://images.unsplash.com/photo-1576092762791-dd9e2220abd4?w=400&q=80", "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=400&q=80", "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=400&q=80"] },
-  { id: "6", name: "Irish Breakfast", icon: "☕", color: "#27AE60", empty: false, ingredients: ["Mezcla de Tés Negros Assam y Ceylan"], prepMode: "Infundir 4 mins en agua a 100°C", emojis: "☀️☕💪", origin: "Irlanda / especialidad", images: ["https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=400&q=80", "https://images.unsplash.com/photo-1576092762791-dd9e2220abd4?w=400&q=80", "https://images.unsplash.com/photo-1563822249548-9a72b6353cd1?w=400&q=80"] },
-  { id: "7", name: "Nightly Calm", icon: "🌙", color: "#5DADE2", empty: false, ingredients: ["Manzanilla", "Hierbabuena", "Azahar"], prepMode: "Infundir 5 mins en agua a 100°C", emojis: "🌙💤🌿", origin: "especialidad", images: ["https://images.unsplash.com/photo-1563822249548-9a72b6353cd1?w=400&q=80", "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=400&q=80", "https://images.unsplash.com/photo-1576092762791-dd9e2220abd4?w=400&q=80"] },
-  { id: "8", name: "Green Tea", icon: "🍃", color: "#2ECC71", empty: false, ingredients: ["100% Té Verde puro"], prepMode: "Infundir 2 mins en agua a 80°C", emojis: "🍵🍃🧘", origin: "China", images: ["https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=400&q=80", "https://images.unsplash.com/photo-1576092762791-dd9e2220abd4?w=400&q=80", "https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?w=400&q=80"] },
+  {
+    id: "1",
+    name: "Lady Grey",
+    icon: "🫐",
+    color: "#4A90E2",
+    empty: false,
+    ingredients: ["Té Negro", "Piel de Naranja", "Piel de Limón", "Bergamota"],
+    prepMode: "Infundir 3 mins en agua a 100°C",
+    emojis: "🫖🍋✨",
+    origin: "Reino Unido",
+    images: [
+      "https://images.unsplash.com/photo-1576092762791-dd9e2220abd4?w=400&q=80",
+      "https://images.unsplash.com/photo-1563822249548-9a72b6353cd1?w=400&q=80",
+      "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=400&q=80",
+    ],
+  },
+  {
+    id: "2",
+    name: "Pomegranate",
+    icon: "🌺",
+    color: "#D9534F",
+    empty: false,
+    ingredients: ["Té Blanco", "Granada", "Rosa", "Hibisco"],
+    prepMode: "Infundir 4 mins en agua a 80°C",
+    emojis: "🌺💧🩸",
+    origin: "especialidad",
+    images: [
+      "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=400&q=80",
+      "https://images.unsplash.com/photo-1576092762791-dd9e2220abd4?w=400&q=80",
+      "https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?w=400&q=80",
+    ],
+  },
+  {
+    id: "3",
+    name: "Lemon & Ginger",
+    icon: "🍋",
+    color: "#FCD116",
+    empty: false,
+    ingredients: ["Jengibre", "Limón", "Manzana", "Zarzamora"],
+    prepMode: "Infundir 5 mins en agua a 100°C",
+    emojis: "🍋✨🌿",
+    origin: "Asia / especialidad",
+    images: [
+      "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=400&q=80",
+      "https://images.unsplash.com/photo-1563822249548-9a72b6353cd1?w=400&q=80",
+      "https://images.unsplash.com/photo-1576092762791-dd9e2220abd4?w=400&q=80",
+    ],
+  },
+  {
+    id: "4",
+    name: "Wild Berries",
+    icon: "🍓",
+    color: "#8E44AD",
+    empty: false,
+    ingredients: ["Frambuesa", "Fresa", "Cereza", "Hibisco"],
+    prepMode: "Infundir 5 mins en agua a 100°C",
+    emojis: "🍓🫐🍒",
+    origin: "especialidad",
+    images: [
+      "https://images.unsplash.com/photo-1563822249548-9a72b6353cd1?w=400&q=80",
+      "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=400&q=80",
+      "https://images.unsplash.com/photo-1576092762791-dd9e2220abd4?w=400&q=80",
+    ],
+  },
+  {
+    id: "5",
+    name: "Chai",
+    icon: "🍂",
+    color: "#D35400",
+    empty: false,
+    ingredients: ["Té Negro", "Canela", "Cardamomo", "Clavo"],
+    prepMode: "Infundir 5 mins en agua a 100°C (con leche opcional)",
+    emojis: "☕🍂🔥",
+    origin: "India",
+    images: [
+      "https://images.unsplash.com/photo-1576092762791-dd9e2220abd4?w=400&q=80",
+      "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=400&q=80",
+      "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=400&q=80",
+    ],
+  },
+  {
+    id: "6",
+    name: "Irish Breakfast",
+    icon: "☕",
+    color: "#27AE60",
+    empty: false,
+    ingredients: ["Mezcla de Tés Negros Assam y Ceylan"],
+    prepMode: "Infundir 4 mins en agua a 100°C",
+    emojis: "☀️☕💪",
+    origin: "Irlanda / especialidad",
+    images: [
+      "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=400&q=80",
+      "https://images.unsplash.com/photo-1576092762791-dd9e2220abd4?w=400&q=80",
+      "https://images.unsplash.com/photo-1563822249548-9a72b6353cd1?w=400&q=80",
+    ],
+  },
+  {
+    id: "7",
+    name: "Nightly Calm",
+    icon: "🌙",
+    color: "#5DADE2",
+    empty: false,
+    ingredients: ["Manzanilla", "Hierbabuena", "Azahar"],
+    prepMode: "Infundir 5 mins en agua a 100°C",
+    emojis: "🌙💤🌿",
+    origin: "especialidad",
+    images: [
+      "https://images.unsplash.com/photo-1563822249548-9a72b6353cd1?w=400&q=80",
+      "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=400&q=80",
+      "https://images.unsplash.com/photo-1576092762791-dd9e2220abd4?w=400&q=80",
+    ],
+  },
+  {
+    id: "8",
+    name: "Green Tea",
+    icon: "🍃",
+    color: "#2ECC71",
+    empty: false,
+    ingredients: ["100% Té Verde puro"],
+    prepMode: "Infundir 2 mins en agua a 80°C",
+    emojis: "🍵🍃🧘",
+    origin: "China",
+    images: [
+      "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=400&q=80",
+      "https://images.unsplash.com/photo-1576092762791-dd9e2220abd4?w=400&q=80",
+      "https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?w=400&q=80",
+    ],
+  },
 ];
 
 export default function HomeScreen() {
@@ -31,15 +151,17 @@ export default function HomeScreen() {
   const theme = Colors[colorScheme ?? "light"];
   const [isBoxOpen, setIsBoxOpen] = useState(true);
   const [teasGrid, setTeasGrid] = useState(INITIAL_TEAS);
-  
-  const [selectedTea, setSelectedTea] = useState<typeof INITIAL_TEAS[0] | null>(null);
+
+  const [selectedTea, setSelectedTea] = useState<
+    (typeof INITIAL_TEAS)[0] | null
+  >(null);
   const expandAnim = useRef(new Animated.Value(0)).current;
 
   // Default slogan para la demostración
   const slogan = "El arte del bienestar, en cada sorbo";
   const router = useRouter();
 
-  const openTeaDetails = (tea: typeof INITIAL_TEAS[0]) => {
+  const openTeaDetails = (tea: (typeof INITIAL_TEAS)[0]) => {
     if (tea.empty) return;
     setSelectedTea(tea);
     Animated.timing(expandAnim, {
@@ -56,93 +178,103 @@ export default function HomeScreen() {
   };
 
   const removeTea = (id: string) => {
-    setTeasGrid(prev => prev.map(tea => tea.id === id ? { ...tea, empty: true } : tea));
+    setTeasGrid((prev) =>
+      prev.map((tea) => (tea.id === id ? { ...tea, empty: true } : tea)),
+    );
   };
 
   return (
     <View style={{ flex: 1 }}>
-    <ScrollView
-      style={[styles.container, { backgroundColor: theme.background }]}
-    >
-      <View style={styles.header}>
-        <Text style={[styles.title, { color: theme.text }]}>Tu Teabox</Text>
-        <Text style={[styles.subtitle, { color: theme.icon }]}>
-          Aquí tienes tu selección actual en la caja organizadora o teabox ☕.
-        </Text>
-      </View>
-
-      <View style={styles.boxWrapper}>
-        <View style={styles.woodenBoxEdge}>
-          {isBoxOpen ? (
-            <View style={styles.woodenBoxInner}>
-              {teasGrid.map((tea, index) => (
-                <View
-                  key={tea.id}
-                  style={[
-                    styles.compartment,
-                    // Add specific borders to mimic the wooden dividers based on position (2 columns)
-                    index % 2 !== 1 && {
-                      borderRightWidth: 4,
-                      borderRightColor: "#B08D6A",
-                    },
-                    index < 6 && {
-                      borderBottomWidth: 4,
-                      borderBottomColor: "#B08D6A",
-                    },
-                  ]}
-                >
-                  {!tea.empty ? (
-                    <TouchableOpacity
-                      activeOpacity={0.8}
-                      onPress={() => openTeaDetails(tea)}
-                      style={[styles.teaPacket, { backgroundColor: tea.color }]}
-                    >
-                      <View style={styles.teaPacketInner}>
-                        {/* Botón X de eliminación */}
-                        <TouchableOpacity style={styles.deleteBtn} onPress={() => removeTea(tea.id)}>
-                          <Text style={styles.deleteBtnText}>✕</Text>
-                        </TouchableOpacity>
-
-                        <Text style={styles.teaIcon}>{tea.icon}</Text>
-                        <Text style={styles.teaName} numberOfLines={2}>
-                          {tea.name}
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
-                  ) : (
-                    // Render Empty Wooden Space
-                    <View style={styles.emptyCompartment} />
-                  )}
-                </View>
-              ))}
-            </View>
-          ) : (
-            <View style={styles.woodenLid}>
-              {/* Engraved Logo Simulation */}
-              <View style={styles.engravedLogo}>
-                <Text style={styles.engravedTeafeel}>teafeel</Text>
-                <Text style={styles.engravedSlogan}>"{slogan}"</Text>
-              </View>
-            </View>
-          )}
-
-          {/* Drawer section simulation - Now clickable */}
-          <TouchableOpacity 
-            style={styles.drawerSection} 
-            activeOpacity={0.7}
-            onPress={() => setIsBoxOpen(!isBoxOpen)}
-          >
-            <View style={styles.drawerHandle} />
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      <TouchableOpacity
-        style={[styles.refeelButton, { backgroundColor: theme.tint }]}
-        onPress={() => router.push("/checkout")}
+      <ScrollView
+        style={[styles.container, { backgroundColor: theme.background }]}
       >
-        <Text style={styles.refeelButtonText}>re-feel</Text>
-      </TouchableOpacity>
+        <View style={styles.header}>
+          <Text style={[styles.title, { color: theme.text }]}>Tu Teabox</Text>
+          <Text style={[styles.subtitle, { color: theme.icon }]}>
+            Aquí tienes tu selección actual en la caja organizadora o teabox ☕.
+          </Text>
+        </View>
+
+        <View style={styles.boxWrapper}>
+          <View style={styles.woodenBoxEdge}>
+            {isBoxOpen ? (
+              <View style={styles.woodenBoxInner}>
+                {teasGrid.map((tea, index) => (
+                  <View
+                    key={tea.id}
+                    style={[
+                      styles.compartment,
+                      // Add specific borders to mimic the wooden dividers based on position (2 columns)
+                      index % 2 !== 1 && {
+                        borderRightWidth: 4,
+                        borderRightColor: "#B08D6A",
+                      },
+                      index < 6 && {
+                        borderBottomWidth: 4,
+                        borderBottomColor: "#B08D6A",
+                      },
+                    ]}
+                  >
+                    {!tea.empty ? (
+                      <TouchableOpacity
+                        activeOpacity={0.8}
+                        onPress={() => openTeaDetails(tea)}
+                        style={[
+                          styles.teaPacket,
+                          { backgroundColor: tea.color },
+                        ]}
+                      >
+                        <View style={styles.teaPacketInner}>
+                          {/* Botón X de eliminación */}
+                          <TouchableOpacity
+                            style={styles.deleteBtn}
+                            onPress={() => removeTea(tea.id)}
+                          >
+                            <Text style={styles.deleteBtnText}>✕</Text>
+                          </TouchableOpacity>
+
+                          <Text style={styles.teaIcon}>{tea.icon}</Text>
+                          <Text style={styles.teaName} numberOfLines={2}>
+                            {tea.name}
+                          </Text>
+                        </View>
+                      </TouchableOpacity>
+                    ) : (
+                      // Render Empty Wooden Space
+                      <View style={styles.emptyCompartment} />
+                    )}
+                  </View>
+                ))}
+              </View>
+            ) : (
+              <View style={styles.woodenLid}>
+                {/* Engraved Logo Simulation */}
+                <View style={styles.engravedLogo}>
+                  <Text style={styles.engravedTeafeel}>teafeel</Text>
+                  <Text style={styles.engravedSlogan}>
+                    &quot;{slogan}&quot;
+                  </Text>
+                </View>
+              </View>
+            )}
+
+            {/* Drawer section simulation - Now clickable */}
+            <TouchableOpacity
+              style={styles.drawerSection}
+              activeOpacity={0.7}
+              onPress={() => setIsBoxOpen(!isBoxOpen)}
+            >
+              <View style={styles.drawerHandle} />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <TouchableOpacity
+          style={[styles.refeelButton, { backgroundColor: theme.tint }]}
+          onPress={() => router.push("/checkout")}
+        >
+          <Text style={styles.refeelButtonText}>re-feel</Text>
+        </TouchableOpacity>
       </ScrollView>
 
       {/* Tea Detail Modal Overlay */}
@@ -159,7 +291,10 @@ export default function HomeScreen() {
         >
           {/* Main expanded content */}
           <ScrollView contentContainerStyle={styles.detailContainer}>
-            <TouchableOpacity onPress={closeTeaDetails} style={styles.backButton}>
+            <TouchableOpacity
+              onPress={closeTeaDetails}
+              style={styles.backButton}
+            >
               <Text style={styles.backButtonText}>← Volver</Text>
             </TouchableOpacity>
 
@@ -168,14 +303,18 @@ export default function HomeScreen() {
               <Text style={styles.detailEmojis}>{selectedTea.emojis}</Text>
             </View>
 
-            <ScrollView 
-              horizontal 
-              pagingEnabled 
+            <ScrollView
+              horizontal
+              pagingEnabled
               showsHorizontalScrollIndicator={false}
               style={styles.imageCarousel}
             >
               {selectedTea.images.map((img, i) => (
-                <Image key={i} source={{ uri: img }} style={styles.carouselImage} />
+                <Image
+                  key={i}
+                  source={{ uri: img }}
+                  style={styles.carouselImage}
+                />
               ))}
             </ScrollView>
 
@@ -188,7 +327,9 @@ export default function HomeScreen() {
 
               <Text style={styles.infoSectionTitle}>Ingredientes</Text>
               {selectedTea.ingredients.map((ing, i) => (
-                <Text key={i} style={styles.infoIngredient}>• {ing}</Text>
+                <Text key={i} style={styles.infoIngredient}>
+                  • {ing}
+                </Text>
               ))}
             </View>
           </ScrollView>
@@ -267,7 +408,7 @@ const styles = StyleSheet.create({
     color: "#6D4C3D", // Very dark wood color
     letterSpacing: -1,
     marginBottom: 10,
-    textShadowColor: 'rgba(255, 255, 255, 0.2)', // Fake highlight
+    textShadowColor: "rgba(255, 255, 255, 0.2)", // Fake highlight
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 1,
   },
@@ -278,7 +419,7 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
     textAlign: "center",
     paddingHorizontal: 30,
-    textShadowColor: 'rgba(255, 255, 255, 0.2)',
+    textShadowColor: "rgba(255, 255, 255, 0.2)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 1,
   },
