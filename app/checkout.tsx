@@ -36,7 +36,7 @@ export default function CheckoutScreen() {
         ]}
       >
         <Text style={[styles.sectionTitle, { color: theme.text }]}>
-          Resumen del "refeel"
+          Resumen del re-feel
         </Text>
         <View style={styles.row}>
           <Text style={[styles.label, { color: theme.text }]}>
